@@ -42,9 +42,9 @@ public class PlayerController : MonoBehaviour
     public float bounceTime;
 
     [Header("Player States")]
-    private bool isRunning;
-    private bool isKnockbacked;
-    private bool isSliding;
+    public bool isRunning;
+    public bool isKnockbacked;
+    public bool isSliding;
     public bool isHanging;
     public bool isClimbing; //still need fix
 
@@ -60,15 +60,14 @@ public class PlayerController : MonoBehaviour
         isSliding = false;
         isHanging = false;
         useGravity = true;
-
+        isClimbing = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-
         //check if player is trying to climb
-        IsPLayerTryingToClimb();
+        //IsPLayerTryingToClimb();
 
         if (useGravity)
         {
@@ -122,7 +121,7 @@ public class PlayerController : MonoBehaviour
 
 
                     //moveDirection = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, 0f, Input.GetAxis("Vertical") * moveSpeed);
-                    ySpeed = -10f; // this fix the walking down "shallow" slopes by increasing value from -0.5f to -4.5f
+                    ySpeed = -10f; // this fix the walking down "shallow" slopes by increasing value from -0.5f to -10f
 
                     if (Input.GetButtonDown("Jump") && !isClimbing)
                     {
@@ -130,22 +129,27 @@ public class PlayerController : MonoBehaviour
                     }
                     else if (Input.GetButtonDown("Jump") && isClimbing)
                     {
-                        useGravity = false;
-                        ySpeed = 0;
-                        moveDirection.x = 0f;
-                        moveDirection.y = moveDirection.z + 10f;
-                        moveDirection.z = 0f;
-                        controller.Move(moveDirection * Time.deltaTime);
+                        //do nothing, cant jump while on a ladder
                     }
 
                     // Set the animation based on the movement direction
                     if (moveDirection.magnitude > 0.1f)
                     {
-                        isRunning = true;
+                        isRunning = true; //this may cause issue on animation, add another condition for isRunning
                         useGravity = true;
+
+                        if (isClimbing)
+                        {
+                            useGravity = false;
+                        } 
+                        else
+                        {
+                            useGravity = true;
+                        }
                     }
                     else
                     {
+
                         isRunning = false;
                     }
 
@@ -186,9 +190,17 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        moveDirection.y = ySpeed;
-        controller.Move(moveDirection * Time.deltaTime);
-        
+        if (isClimbing)
+        {
+            //dont modify y if climbing
+            moveDirection = new Vector3(0f, moveSpeed * -0.8f, 0f) * Time.deltaTime;
+        } 
+        else
+        {
+            //as is
+            moveDirection.y = ySpeed;
+            controller.Move(moveDirection * Time.deltaTime);
+        }
 
         //move the player in different directions based on camera look direction
         if ((moveDirection.x != 0 || moveDirection.z != 0) && isRunning)

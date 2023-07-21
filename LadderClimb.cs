@@ -5,14 +5,19 @@ using UnityEngine;
 public class LadderClimb : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
+    void OnTriggerEnter(Collider other)
     {
-        
+        if(other.CompareTag("Player") && other.TryGetComponent<PlayerController>(out var player))
+        {
+            player.isClimbing = true;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerExit(Collider other)
     {
-        
+        if (other.CompareTag("Player") && other.TryGetComponent<PlayerController>(out var player))
+        {
+            player.isClimbing = false;
+        }
     }
 }

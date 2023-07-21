@@ -63,10 +63,10 @@ public class CameraController : MonoBehaviour
         }
         else {
             pivot.Rotate(vertical, 0, 0);
-        }*/
+        }
 
         //Limit Up-Down camera rotation
-        /*if (pivot.rotation.eulerAngles.x > maxViewAngle && pivot.rotation.eulerAngles.x < 180f)
+        if (pivot.rotation.eulerAngles.x > maxViewAngle && pivot.rotation.eulerAngles.x < 180f)
         {
             //pivot.rotation = Quaternion.Euler(maxViewAngle, 0, 0);
             pivot.rotation = Quaternion.Euler(maxViewAngle, target.rotation.eulerAngles.y, 0);
